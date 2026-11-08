@@ -1,46 +1,13 @@
-import { useRef, useState } from "react";
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import { useState } from "react";
 import { ArrowRight, Phone, ChevronDown } from "lucide-react";
 import { CONTACT, waLink } from "../data";
-import { ease, isLite, Magnetic } from "./motion";
 import { WhatsAppIcon } from "./Icons";
 
-const TITLE = ["Votre besoin", "automobile, entre", "de bonnes mains"];
-
+/*
+ * Première section : volontairement statique (aucune animation, aucune parallaxe)
+ * pour un affichage stable sur téléphone comme sur ordinateur.
+ */
 export default function Hero() {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
-  const imgScale = useTransform(scrollYProgress, [0, 1], [1.05, 1.18]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, -60]);
-
-  // Parallaxe 3D à la souris : l'image et le texte bougent en sens opposé
-  const mx = useSpring(useMotionValue(0), { stiffness: 60, damping: 18 });
-  const my = useSpring(useMotionValue(0), { stiffness: 60, damping: 18 });
-  const bgX = useTransform(mx, (v) => v * -24);
-  const bgY = useTransform(my, (v) => v * -16);
-  const bgRotY = useTransform(mx, (v) => v * 4);
-  const bgRotX = useTransform(my, (v) => v * -3);
-  const txtRotY = useTransform(mx, (v) => v * 6);
-  const txtRotX = useTransform(my, (v) => v * -5);
-  const onPointerMove = (e) => {
-    if (e.pointerType === "touch") return;
-    const r = e.currentTarget.getBoundingClientRect();
-    mx.set(((e.clientX - r.left) / r.width - 0.5) * 2);
-    my.set(((e.clientY - r.top) / r.height - 0.5) * 2);
-  };
-  const onPointerLeave = () => {
-    mx.set(0);
-    my.set(0);
-  };
-
-  // Ordinateur : le cadre du hero bascule en 3D quand on le quitte en défilant.
-  // Téléphone : rien ne bouge tout seul, le hero reste stable et lisible.
-  const [lite] = useState(isLite);
-  const frameRotX = useTransform(scrollYProgress, [0, 1], lite ? [0, 0] : [0, 14]);
-  const frameScale = useTransform(scrollYProgress, [0, 1], lite ? [1, 1] : [1, 0.9]);
-  const frameRadius = useTransform(scrollYProgress, [0, 1], lite ? [18, 18] : [22, 40]);
-
   const [profil, setProfil] = useState("Professionnel");
   const [form, setForm] = useState({ besoin: "Autre demande", vehicule: "", echeance: "Dès que possible", budget: "" });
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -61,95 +28,37 @@ export default function Hero() {
   };
 
   return (
-    <section id="accueil" className="hero" ref={ref}>
-      <motion.div
-        className="hero__frame"
-        onPointerMove={onPointerMove}
-        onPointerLeave={onPointerLeave}
-        style={{ rotateX: frameRotX, scale: frameScale, borderRadius: frameRadius, transformPerspective: 1400, transformOrigin: "50% 0%" }}
-      >
-        <motion.div className="hero__bg" style={{ y: imgY, scale: imgScale }}>
-          <motion.div
-            className="hero__bg3d"
-            style={{ x: bgX, y: bgY, rotateY: bgRotY, rotateX: bgRotX, transformPerspective: 1200 }}
-          >
-            <motion.img
-              src="/images/palisade.jpg"
-              alt="Hyundai Palisade bleu nuit présenté par PAULINE VOITURES"
-              initial={{ scale: 1.25, filter: "blur(8px)" }}
-              animate={{ scale: 1, filter: "blur(0px)" }}
-              transition={{ duration: 2.2, ease }}
-            />
-          </motion.div>
-        </motion.div>
+    <section id="accueil" className="hero hero--static">
+      <div className="hero__frame">
+        <div className="hero__bg">
+          <img src="/images/palisade.jpg" alt="Hyundai Palisade bleu nuit présenté par PAULINE VOITURES" />
+        </div>
         <div className="hero__shade" />
-        <motion.div
-          className="hero__glow"
-          animate={{ opacity: [0.35, 0.65, 0.35], scale: [1, 1.1, 1] }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        />
 
-        <motion.div
-          className="hero__content"
-          style={{ y: contentY, rotateY: txtRotY, rotateX: txtRotX, transformPerspective: 1000, transformOrigin: "0% 50%" }}
-        >
-          <motion.p
-            className="eyebrow eyebrow--light"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.8, ease }}
-          >
-            / Automobile &amp; commerce · Abidjan
-          </motion.p>
+        <div className="hero__content">
+          <p className="eyebrow eyebrow--light">/ Automobile &amp; commerce · Abidjan</p>
           <h1 className="hero__title">
-            {TITLE.map((line, i) => (
-              <span key={i} className="line-mask">
-                <motion.span
-                  className="line"
-                  initial={{ y: "110%" }}
-                  animate={{ y: "0%" }}
-                  transition={{ duration: 1.1, ease, delay: 0.6 + i * 0.12 }}
-                >
-                  {line}
-                </motion.span>
-              </span>
-            ))}
+            Votre besoin
+            <br />
+            automobile, entre
+            <br />
+            de bonnes mains
           </h1>
-          <motion.p
-            className="hero__lead"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1, duration: 0.8, ease }}
-          >
+          <p className="hero__lead">
             À Yopougon, PAULINE VOITURES étudie votre demande et vous met en relation avec des opportunités adaptées, pour
             les particuliers comme pour les professionnels.
-          </motion.p>
-          <motion.div
-            className="hero__ctas"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.25, duration: 0.8, ease }}
-          >
-            <Magnetic>
-              <a className="btn btn--orange" href={waLink("Bonjour PAULINE VOITURES, ")} target="_blank" rel="noreferrer">
-                <WhatsAppIcon /> Nous contacter sur WhatsApp
-              </a>
-            </Magnetic>
-            <Magnetic>
-              <a className="btn btn--glass" href={`tel:${CONTACT.phoneIntl}`}>
-                <Phone size={15} /> Appeler
-              </a>
-            </Magnetic>
-          </motion.div>
-        </motion.div>
+          </p>
+          <div className="hero__ctas">
+            <a className="btn btn--orange" href={waLink("Bonjour PAULINE VOITURES, ")} target="_blank" rel="noreferrer">
+              <WhatsAppIcon /> Nous contacter sur WhatsApp
+            </a>
+            <a className="btn btn--glass" href={`tel:${CONTACT.phoneIntl}`}>
+              <Phone size={15} /> Appeler
+            </a>
+          </div>
+        </div>
 
-        <motion.form
-          className="quick"
-          onSubmit={submit}
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.45, duration: 1, ease }}
-        >
+        <form className="quick" onSubmit={submit}>
           <div className="quick__top">
             <div className="seg" role="tablist">
               {["Particulier", "Professionnel"].map((p) => (
@@ -161,10 +70,7 @@ export default function Hero() {
                   onClick={() => setProfil(p)}
                   className={profil === p ? "on" : ""}
                 >
-                  {profil === p && (
-                    <motion.span layoutId="seg" className="seg__bg" transition={{ type: "spring", stiffness: 420, damping: 34 }} />
-                  )}
-                  <span>{p}</span>
+                  {p}
                 </button>
               ))}
             </div>
@@ -208,8 +114,8 @@ export default function Hero() {
               Envoyer <ArrowRight size={15} />
             </button>
           </div>
-        </motion.form>
-      </motion.div>
+        </form>
+      </div>
     </section>
   );
 }
