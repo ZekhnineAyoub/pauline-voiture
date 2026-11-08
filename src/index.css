@@ -515,3 +515,68 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .coverflow__nav { display: none; }
 }
 @keyframes hint { 0%, 100% { transform: translateX(-6px); } 50% { transform: translateX(6px); } }
+
+/* =========================================================
+   Correctifs responsive (téléphone / tablette)
+   ========================================================= */
+/* Les éléments de grille ne doivent jamais prendre la largeur réelle des photos */
+.about__grid > *, .about__col > *, .acts > *, .cat > *, .cat__grid > *,
+.contact__grid > *, .footer__grid > *, .pillars > *, .quick__fields > *, .cta > * { min-width: 0; }
+.tilt, .tilt img { max-width: 100%; }
+/* Filet de sécurité : rien ne peut élargir la page horizontalement */
+html, body { max-width: 100%; overflow-x: clip; }
+main, footer, .hero, .section, .engage { overflow-x: clip; }
+
+/* Sur tactile, les cartes restent stables (pas d'inclinaison) */
+.tilt--lite { transform-style: flat; }
+
+@media (max-width: 720px) {
+  .container { width: calc(100% - 32px); }
+  .hero { padding: 8px; }
+  .hero__frame { min-height: auto; padding: 96px 16px 16px; border-radius: 18px; }
+  .hero__title { font-size: clamp(36px, 11vw, 48px); }
+  .hero__lead { font-size: 14.5px; }
+  .hero__content { margin-bottom: 28px; }
+  .hero__ctas .magnetic, .hero__ctas .btn { width: 100%; }
+  .hero__glow { width: 320px; height: 320px; left: -140px; }
+  .quick__top { flex-direction: column; align-items: flex-start; }
+  .seg { width: 100%; }
+  .seg button { flex: 1; }
+  .nav { top: 10px; width: calc(100% - 20px); padding: 7px 7px 7px 10px; }
+  .nav--scrolled { top: 8px; width: calc(100% - 16px); }
+  .brand { font-size: 14px; }
+  .brand__mark { width: 30px; height: 30px; }
+  .h2 { font-size: clamp(30px, 9vw, 40px); }
+  .h2--xl { font-size: clamp(38px, 11vw, 48px); }
+  .about__grid { margin-top: 32px; }
+  .tile--dark { min-height: 0; padding: 26px 20px; }
+  .hours { margin: 26px 0; }
+  .marquee { margin-top: 60px; padding: 16px 0; }
+  .marquee span { font-size: 26px; padding: 0 14px; }
+  .acts { gap: 14px; }
+  .cta__text { padding: 28px 22px; }
+  .cta__stage { min-height: 250px; }
+  .cta__card { width: 44%; }
+  .cat__grid { gap: 8px; }
+  .cat__label { font-size: 11px; padding: 5px 9px; }
+  .engage { padding: 80px 0; }
+  .engage__head .btn { width: 100%; }
+  .pillar__n { font-size: 32px; }
+  .coverflow { height: 230px; }
+  .device { width: 100%; }
+  .device__float { border-radius: 28px; padding: 9px; }
+  .stay { margin-top: 70px; }
+  .footer { padding-top: 50px; }
+  .footer__big { margin-bottom: 40px; }
+  .fab { right: 16px; bottom: 16px; width: 54px; height: 54px; }
+  .lightbox figcaption { font-size: 15px; }
+  .lightbox figcaption .btn { width: 100%; }
+}
+
+/* Tablette */
+@media (min-width: 721px) and (max-width: 1024px) {
+  .hero__frame { min-height: auto; padding-top: 120px; }
+  .acts > div:nth-child(n) .act { aspect-ratio: 1.1; }
+  .contact__grid { grid-template-columns: 1fr; gap: 50px; }
+  .cta { grid-template-columns: 1fr; }
+}

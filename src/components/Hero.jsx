@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { gx, gy, isTouch, startGyro, state } from "./gyro";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { ArrowRight, Phone, ChevronDown } from "lucide-react";
 import { CONTACT, waLink } from "../data";
-import { ease, Magnetic } from "./motion";
+import { ease, isLite, Magnetic } from "./motion";
 import { WhatsAppIcon } from "./Icons";
 
 const TITLE = ["Votre besoin", "automobile, entre", "de bonnes mains"];
@@ -31,37 +30,16 @@ export default function Hero() {
     my.set(((e.clientY - r.top) / r.height - 0.5) * 2);
   };
   const onPointerLeave = () => {
-    if (isTouch()) return;
     mx.set(0);
     my.set(0);
   };
 
-  // Mobile : parallaxe pilotée par le gyroscope, et un léger mouvement automatique
-  // tant que le téléphone n'envoie pas de données de mouvement.
-  useEffect(() => {
-    if (!isTouch()) return;
-    startGyro();
-    let t = 0;
-    let raf;
-    const tick = () => {
-      t += 0.012;
-      if (state.active) {
-        mx.set(gx.get() * 1.4);
-        my.set(gy.get() * 1.4);
-      } else {
-        mx.set(Math.sin(t) * 0.7);
-        my.set(Math.cos(t * 0.8) * 0.45);
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [mx, my]);
-
-  // Le cadre du hero bascule en 3D quand on le quitte en défilant (ordinateur et mobile)
-  const frameRotX = useTransform(scrollYProgress, [0, 1], [0, 14]);
-  const frameScale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
-  const frameRadius = useTransform(scrollYProgress, [0, 1], [22, 40]);
+  // Ordinateur : le cadre du hero bascule en 3D quand on le quitte en défilant.
+  // Téléphone : rien ne bouge tout seul, le hero reste stable et lisible.
+  const [lite] = useState(isLite);
+  const frameRotX = useTransform(scrollYProgress, [0, 1], lite ? [0, 0] : [0, 14]);
+  const frameScale = useTransform(scrollYProgress, [0, 1], lite ? [1, 1] : [1, 0.9]);
+  const frameRadius = useTransform(scrollYProgress, [0, 1], lite ? [18, 18] : [22, 40]);
 
   const [profil, setProfil] = useState("Professionnel");
   const [form, setForm] = useState({ besoin: "Autre demande", vehicule: "", echeance: "Dès que possible", budget: "" });

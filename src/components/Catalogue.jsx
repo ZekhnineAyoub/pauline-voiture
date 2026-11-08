@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Phone, X, Maximize2 } from "lucide-react";
 import { CATALOGUE, CONTACT, waLink } from "../data";
-import { Reveal, SplitWords, Tilt3D, ease } from "./motion";
+import { Reveal, SplitWords, Tilt3D, ease, isLite } from "./motion";
 
 export default function Catalogue() {
   const [open, setOpen] = useState(null);
+  const [lite] = useState(isLite);
 
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && setOpen(null);
@@ -56,8 +57,8 @@ export default function Catalogue() {
             {CATALOGUE.map((c, i) => (
               <motion.div
                 key={c.img}
-                initial={{ opacity: 0, rotateY: i % 2 ? -90 : 90, z: -200 }}
-                whileInView={{ opacity: 1, rotateY: 0, z: 0 }}
+                initial={lite ? { opacity: 0, y: 30, scale: 0.95 } : { opacity: 0, rotateY: i % 2 ? -90 : 90, z: -200 }}
+                whileInView={{ opacity: 1, rotateY: 0, z: 0, y: 0, scale: 1 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 1.1, ease, delay: i * 0.12 }}
                 style={{ transformPerspective: 1200, transformOrigin: i % 2 ? "0% 50%" : "100% 50%" }}

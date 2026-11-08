@@ -1,15 +1,16 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { ACTIVITIES, waLink } from "../data";
-import { Reveal, Reveal3D, SplitWords, Tilt3D, ease } from "./motion";
+import { Reveal, Reveal3D, SplitWords, Tilt3D, ease, isLite } from "./motion";
 
 export default function Activities() {
   const ctaRef = useRef(null);
+  const [lite] = useState(isLite);
   const { scrollYProgress } = useScroll({ target: ctaRef, offset: ["start end", "end start"] });
-  const rotA = useTransform(scrollYProgress, [0, 0.5, 1], [-18, -6, 4]);
-  const rotB = useTransform(scrollYProgress, [0, 0.5, 1], [18, 6, -4]);
-  const lift = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const rotA = useTransform(scrollYProgress, [0, 0.5, 1], lite ? [-6, -3, 0] : [-18, -6, 4]);
+  const rotB = useTransform(scrollYProgress, [0, 0.5, 1], lite ? [6, 3, 0] : [18, 6, -4]);
+  const lift = useTransform(scrollYProgress, [0, 1], lite ? [15, -15] : [40, -40]);
 
   return (
     <section id="activites" className="section">
